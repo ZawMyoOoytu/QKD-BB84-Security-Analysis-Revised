@@ -1,0 +1,18 @@
+\section{Introduction}
+\IEEEPARstart{Q}{uantum} key distribution (QKD) allows two parties, Alice and Bob, to establish a shared secret key whose security rests on the laws of quantum mechanics rather than on computational assumptions. The first and still most widely deployed protocol is BB84 \cite{BB84}; its unconditional security against arbitrary attacks has been established by several independent proofs \cite{LoChau99,Mayers01,ShorPreskill00,Renner05}, and the field has been surveyed extensively \cite{Scarani09,Xu20,Pirandola20}.
+
+Early proofs were asymptotic: they assume an infinite number of exchanged signals, so that statistical fluctuations of the observed error rate vanish. A real device exchanges a finite block of $N$ pulses within a finite time, and the parameter-estimation sample is correspondingly small. Finite-key analyses \cite{CaiScarani09,Tomamichel12,HayashiTsurumaru12,Lim14} quantify the resulting penalty in a \emph{composable} way, i.e., with explicit correctness and secrecy parameters $\epscor$ and $\epssec$. The penalty is far from negligible: key rates drop sharply for $N\lesssim 10^{6}$, and below a minimum block length no key can be generated at all.
+
+The security theorems cited above hold against \emph{any} eavesdropper, so the key length depends only on the observed statistics. It is nevertheless instructive, and practically important for system design, to understand which statistics a specific, simple attack produces. The \emph{intercept-resend} (IR) attack is the canonical example: Eve measures each intercepted pulse in a random basis and resends her result \cite{BB84,Fuchs97}. It is easy to implement, it does not require a quantum memory, and its signature is a QBER of 25\% when applied to every pulse. In realistic links the IR statistics are superimposed on genuine channel noise, and the question of interest is how large a fraction of pulses Eve can intercept before the finite-key protocol aborts or returns a zero-length key.
+
+\subsection{Contributions}
+\begin{enumerate}
+\item We derive, in closed form, the QBER of BB84 under a partial IR attack with fraction $p$ combined with an independent bit-flip channel $\ech$ (Lemma~\ref{lem:qber}).
+\item We specialise the finite-key bound of Tomamichel \emph{et al.}\ \cite{Tomamichel12} to this setting, include the cost of error correction at efficiency $\fEC$, and optimise the basis bias $q_X$ at every operating point (Section~\ref{sec:analysis}).
+\item We obtain the operational quantities $\Nmin(Q)$ and $p_{\max}(N,\ech)$, and relate them to the asymptotic thresholds.
+\item We validate the analysis by a bit-level Monte Carlo simulation of the full protocol, and check the fluctuation bound empirically (Section~\ref{sec:results}).
+\item We show that the general-attack bound is pessimistic for an IR-only adversary and quantify the gap (Remark~\ref{rem:ir}).
+\end{enumerate}
+
+\subsection{Paper Organisation}
+Section~\ref{sec:related} reviews related work. Section~\ref{sec:model} defines the system, the attack model, the protocol and the security definitions. Section~\ref{sec:analysis} contains the analytical methodology. Section~\ref{sec:design} describes the simulation and the experimental design. Section~\ref{sec:results} presents the results, Section~\ref{sec:discussion} discusses limitations, and Section~\ref{sec:conclusion} concludes.

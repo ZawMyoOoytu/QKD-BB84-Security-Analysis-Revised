@@ -1,0 +1,13 @@
+\section{Experimental Design}\label{sec:design}
+
+\subsection{Simulation Methodology}
+We implemented the protocol at bit level in Python (NumPy). For every trial, $N$ bits and bases are drawn for Alice and Bob; Eve's interception is simulated pulse by pulse, including her random basis and her random outcome in the wrong basis; the bit-flip channel is applied after Eve; Bob measures, the bases are sifted, $n$ and $k$ are counted, and the $Z$-sample error rate is compared to $\Qtol$. If the test passes, $\ell$ is computed from \eqref{eq:keylen} with the realised $n$ and $k$, and a rate of zero is recorded on abort. Unless noted otherwise, $\epssec=10^{-10}$, $\epscor=10^{-15}$, $\fEC=1.16$, $\ech=0.01$, $z=3$. The bias $q_X$ is set to the optimum found by the analytic search. The random seed is fixed, and the code and the per-trial raw counts are released with the manuscript.
+
+\subsection{Experiments}
+Four experiments are run.
+\begin{enumerate}
+\item \textbf{QBER law.} $N=10^5$, $q_X=0.8$, $60$ trials per point, $\ech\in\{0,0.02\}$, $p\in\{0,0.1,0.2,0.3,0.4,0.5,0.75,1\}$. The simulated QBER is compared with \eqref{eq:qber}.
+\item \textbf{Full-protocol key rate.} $N\in\{10^4,10^5,10^6\}$ with $1500$, $200$ and $30$ trials respectively, $p\in\{0,0.1,0.2,0.3\}$, $\ech=0.01$. The simulated rate, including aborts, is compared with the analytic prediction.
+\item \textbf{Analytic sweeps.} Key rate against $N$ ($60$ logarithmically spaced points from $10^{3.5}$ to $10^8$), against $p\in[0,0.6]$, and against $\ech\in[0,0.10]$; the minimum block length $\Nmin(Q)$; and the maximum tolerable attack fraction $p_{\max}$. These involve no randomness.
+\item \textbf{Fluctuation-bound check.} For $(n,k)\in\{(500,500),(2000,500),(5000,1000)\}$ and $Q=0.03$, the total number of errors is drawn from a binomial distribution and split hypergeometrically, and $\Pr[Q_n-Q_k\ge\gamma]$ is estimated from $4\times10^5$ trials for comparison with \eqref{eq:serfling}.
+\end{enumerate}

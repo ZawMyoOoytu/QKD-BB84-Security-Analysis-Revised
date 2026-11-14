@@ -1,0 +1,16 @@
+\section{Discussion and Limitations}\label{sec:discussion}
+
+\subsection{What the Results Do and Do Not Show}
+The finite-key bound \eqref{eq:keylen} holds against arbitrary (coherent) attacks. IR attacks enter the analysis only through the QBER they create. The results therefore answer a design question, namely how much interception a given block length tolerates before the key vanishes, and not a question about the optimality of IR from Eve's point of view.
+
+\subsection{Implications for System Design}
+(i) Block lengths below $10^5$ pulses leave little margin: at $N=10^4$ the tolerated attack fraction is below $8\%$ for $\ech=0.01$. (ii) The basis bias $q_X$ should be re-optimised with $N$ and the expected QBER, because it ranges from $0.5$ near threshold to $0.9$ and above for large blocks. (iii) The error-correction efficiency $\fEC$ matters as much as the fluctuation term: in \eqref{eq:asym}, reducing $\fEC$ from $1.16$ to $1.05$ raises the asymptotic QBER tolerance from $9.81\%$ to $10.6\%$.
+
+\subsection{Limitations}
+\begin{itemize}
+\item \emph{Ideal source and detector.} Multi-photon pulses, loss and dark counts, together with photon-number-splitting attacks \cite{Brassard00,GLLP04}, are not modelled. Real implementations need decoy-state finite-key bounds \cite{Lim14}.
+\item \emph{Fixed tolerance rule.} The threshold \eqref{eq:qtol} assumes that the expected QBER is known to the operator; adaptive estimation of $Q$ changes the abort statistics.
+\item \emph{Basis-independent noise.} We assumed the same $\ech$ in both bases. Basis-dependent noise requires separate treatment, as the key rate depends on the phase-error rate.
+\item \emph{Error-correction model.} $\leakEC=\fEC nh(\Qtol)$ is an idealised model; the leakage of a practical code depends on the code, block length and frame-error rate.
+\item \emph{Composability and side channels.} Classical post-processing and authentication costs, and implementation side channels, are not included.
+\end{itemize}

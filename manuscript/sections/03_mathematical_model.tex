@@ -1,0 +1,44 @@
+\section{System and Attack Model}\label{sec:model}
+
+\subsection{BB84 Signal Exchange}
+Alice sends $N$ pulses, each encoding a uniformly random bit $a_i\in\{0,1\}$ in a basis $\theta_i\in\{X,Z\}$. We assume an ideal single-photon source and an ideal detector without dark counts or losses; these are strong assumptions that we revisit in Section~\ref{sec:discussion}. Bob measures every pulse in a basis $\theta_i'\in\{X,Z\}$ and obtains $b_i$. Both parties choose the $X$ basis with probability $q_X\in[\tfrac12,1)$ and the $Z$ basis with probability $1-q_X$, independently. This \emph{efficient} variant of BB84 is what makes the asymptotic sifting loss vanish and is part of the protocol of \cite{Tomamichel12}.
+
+\subsection{Intercept-Resend Attack}
+Eve attacks each pulse independently with probability $p$. For an attacked pulse she measures in a uniformly random basis $\theta^{E}_i$, obtains a bit $e_i$, and sends Bob a fresh state encoding $e_i$ in basis $\theta^E_i$. If $\theta^E_i=\theta_i$, then $e_i=a_i$; otherwise $e_i$ is uniformly random and independent of $a_i$. A non-attacked pulse is forwarded unchanged.
+
+\subsection{Channel Noise}
+After Eve, each pulse passes through a channel that flips the encoded bit with probability $\ech$, independently of everything else. This is the effective bit-flip rate in the measurement bases, which also captures a depolarising channel with depolarising probability $\lambda$ via $\ech=\lambda/2$, and covers detector and alignment errors lumped into one parameter. Placing the noise after Eve corresponds to Eve being close to Alice; the QBER law below is symmetric under reordering because independent flips commute.
+
+\subsection{Security Goal}
+Following \cite{Renner05,Tomamichel12}, the protocol is $\varepsilon$-secure if it is $\epscor$-correct and $\epssec$-secret with $\epscor+\epssec\le\varepsilon$. The key is $\epscor$-correct if the probability that Alice's and Bob's final keys differ is at most $\epscor$. It is $\epssec$-secret if the joint state of the key and Eve's information is within trace distance $\epssec$ (weighted by the probability that the protocol does not abort) of an ideal, uniform, uncorrelated key.
+
+\section{Protocol and Finite-Key Framework}\label{sec:protocol}
+
+\subsection{Protocol Steps}
+\begin{enumerate}
+\item \textbf{Distribution and measurement.} $N$ pulses are exchanged as in Section~\ref{sec:model}.
+\item \textbf{Sifting.} Alice and Bob publicly announce their bases. Pulses with $X$--$X$ matching form the raw key of length $n$. Pulses with $Z$--$Z$ matching, of number $k$, are used for parameter estimation. Other pulses are discarded.
+\item \textbf{Parameter estimation.} They publicly compare the $k$ $Z$-basis bits and compute the observed error rate $Q_k$. If $Q_k>\Qtol$, the protocol aborts.
+\item \textbf{Error correction.} One-way reconciliation \cite{BrassardSalvail93} leaks $\leakEC$ bits, modelled as $\leakEC=\fEC\,n\,h(\Qtol)$, followed by error verification with a hash of $\lceil\log_2(1/\epscor)\rceil$ bits to reach $\epscor$-correctness.
+\item \textbf{Privacy amplification.} A two-universal hash function \cite{BBCM95,RennerKoenig05} compresses the corrected key to length $\ell$.
+\end{enumerate}
+Here $h(x)=-x\log_2x-(1-x)\log_2(1-x)$ is the binary entropy, truncated to $h(x)=1$ for $x\ge\tfrac12$ as in \cite{Tomamichel12}. The key is generated in the $X$ basis and estimated in the $Z$ basis, which is the configuration used in \cite{Tomamichel12}.
+
+\subsection{Finite-Key Length}
+The following expression is the key-length bound of \cite{Tomamichel12} for the parameter choices used here. For BB84 with perfect single photons and $q=1$ in the notation of \cite{Tomamichel12}, a secret key of length
+\begin{equation}\label{eq:keylen}
+\ell=\Big\lfloor n\big[1-h(\Qtol+\mu)\big]-\leakEC-2\log_2\frac1{\epssec}-\log_2\frac2{\epscor}\Big\rfloor
+\end{equation}
+can be extracted, where the statistical-fluctuation term is
+\begin{equation}\label{eq:mu}
+\mu=\sqrt{\frac{n+k}{nk}\,\frac{k+1}{k}\,\ln\frac{4}{\epssec}}.
+\end{equation}
+This corresponds to the choice $\varepsilon=\epssec/4$ and $\bar\varepsilon=\epssec/2$ in the optimisation over smoothing parameters in the supplementary material of \cite{Tomamichel12}, which we use instead of a numerical optimisation. The term $\mu$ is obtained by inverting a Serfling-type tail bound,
+\begin{equation}\label{eq:serfling}
+\Pr\big[Q_n\ge Q_k+\gamma\big]\le\exp\!\Big(-\frac{\gamma^2\,n\,k^2}{(n+k)(k+1)}\Big),
+\end{equation}
+where $Q_n$ denotes the (unobserved) error rate the $Z$-basis measurement would have produced on the $n$ key positions, and $Q_k$ the observed error rate on the sample. Setting the right-hand side to $\varepsilon$ gives \eqref{eq:mu}.
+
+\begin{remark}
+Equations \eqref{eq:keylen}--\eqref{eq:mu} are used as stated in \cite{Tomamichel12}; we do not re-derive the entropic uncertainty argument. All results below are therefore conditional on that theorem. The numerical value of the finite-size penalty is not an artefact of IR attacks: any attack producing the same $Q_k$ yields the same $\ell$.
+\end{remark}

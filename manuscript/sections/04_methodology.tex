@@ -1,0 +1,44 @@
+\section{Analytical Methodology}\label{sec:analysis}
+
+\subsection{QBER under Intercept-Resend Attack and Channel Noise}
+
+\begin{lemma}\label{lem:qber}
+For BB84 with uniformly random Eve basis, attack fraction $p$ and independent bit-flip probability $\ech$, the QBER in both the $X$ and the $Z$ basis, conditioned on matching bases, is
+\begin{equation}\label{eq:qber}
+Q=\ech+(1-2\ech)\frac p4 .
+\end{equation}
+\end{lemma}
+\begin{proof}
+Consider a pulse with $\theta_i=\theta_i'$. With probability $1-p$ it is not attacked. With probability $p$ it is attacked; Eve's basis equals Alice's with probability $1/2$, in which case Eve resends the correct state, and otherwise Eve's basis differs from Alice's. In the latter case Bob measures in Alice's basis a state prepared in the conjugate basis, so his outcome is uniform and wrong with probability $1/2$. Hence the IR-induced error probability is $e_{\mathrm{IR}}=p\cdot\frac12\cdot\frac12=p/4$. The channel flips the bit independently with probability $\ech$, so the two error sources combine as the XOR of independent Bernoulli variables:
+\[
+Q=e_{\mathrm{IR}}(1-\ech)+(1-e_{\mathrm{IR}})\ech=\ech+e_{\mathrm{IR}}(1-2\ech),
+\]
+which is \eqref{eq:qber}. The argument does not depend on which basis Alice and Bob use, because Eve's basis is uniform.
+\end{proof}
+
+For $\ech=0$ and $p=1$ this gives the well-known 25\% error rate. The probability that a sample of $k$ bits reveals at least one error is $1-(1-Q)^k$, which for $\ech=0$ becomes $1-(1-p/4)^k$. Even small attacks are therefore detected with high probability for moderate $k$, but detection alone does not bound Eve's information; this is what the key length~\eqref{eq:keylen} accounts for.
+
+\subsection{Choice of the Tolerance Threshold}
+The threshold $\Qtol$ must be fixed before the protocol runs. We set
+\begin{equation}\label{eq:qtol}
+\Qtol=Q+z\sqrt{\frac{Q(1-Q)}{k}},\qquad z=3,
+\end{equation}
+where $Q$ is the value expected from \eqref{eq:qber}. This makes the probability that an honest (or merely noisy) run is aborted about $10^{-3}$, and it corresponds to a design in which the operator calibrates the expected QBER of the link. Larger $z$ lowers the abort rate at the cost of a larger $\Qtol$ and thus a shorter key.
+
+\subsection{Expected Key Length and Optimal Basis Bias}
+With $N$ pulses and bias $q_X$, the expected sizes are
+\begin{equation}\label{eq:nk}
+n=Nq_X^2,\qquad k=N(1-q_X)^2 .
+\end{equation}
+Substituting \eqref{eq:qber}, \eqref{eq:qtol} and \eqref{eq:nk} into \eqref{eq:keylen} gives $\ell(N,p,\ech,q_X)$ and the key rate $r=\ell/N$ in bits per transmitted pulse. We optimise over $q_X$ for every operating point. The trade-off is clear from \eqref{eq:mu}: increasing $q_X$ enlarges $n$ but shrinks $k$, which enlarges $\mu$ and $\Qtol-Q$. As $N\to\infty$, $q_X\to1$ and
+\begin{equation}\label{eq:asym}
+r_\infty=1-(1+\fEC)\,h(Q),
+\end{equation}
+so that no sifting loss remains. The condition $r_\infty>0$ defines the asymptotic QBER tolerance; for $\fEC=1.16$ it is $Q^\ast\approx 9.81\%$. Using \eqref{eq:qber}, the corresponding asymptotic attack tolerance is $p^\ast=4(Q^\ast-\ech)/(1-2\ech)$, i.e.\ $0.39$, $0.36$ and $0.33$ for $\ech=0$, $0.01$, $0.02$.
+
+\subsection{Minimum Block Length and Maximum Tolerable Attack}
+For a given $Q$, $\Nmin(Q)$ is the smallest $N$ for which $\max_{q_X}\ell>0$. Similarly, $p_{\max}(N,\ech)$ is the largest $p$ with $\max_{q_X}\ell>0$. Both are computed numerically by bisection; since $\ell$ is monotone in $N$ and decreasing in $p$, the bisection is well defined. At threshold the optimum is the balanced split $q_X=\tfrac12$ ($n=k$), where the fluctuation term is largest, which is why finite-size effects are so pronounced close to $Q^\ast$.
+
+\begin{remark}[IR-only adversary]\label{rem:ir}
+If Eve is \emph{known} to be restricted to the IR strategy of Section~\ref{sec:model}, one can compute her information directly. Whenever she attacks and her basis matches Alice's (a fraction $p/2$ of sifted bits) she knows $a_i$ exactly; otherwise her result is independent of $a_i$. Hence $H(A|E)=1-p/2$ per sifted bit, and the asymptotic key fraction is $1-p/2-\fEC\,h(Q)$, which vanishes at $p\approx0.594$, $0.577$, $0.560$ for $\ech=0$, $0.01$, $0.02$. This is considerably larger than the general-attack limits above. The gap is the price paid for not assuming that Eve is restricted; since a real adversary is not, the general bound \eqref{eq:keylen} is the one that provides security. The IR-only value is given only to quantify the conservatism.
+\end{remark}
